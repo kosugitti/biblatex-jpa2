@@ -607,7 +607,9 @@
     }%
   }%
   %% 出版社
-  \ifnumequal{\jpa@useinitials}{1}{\adddot\addspace}{\addspace}%
+  \ifnumequal{\jpa@useinitials}{0}%
+    {\jpa@fullspace}%     % 日本語: 全角スペース
+    {\adddot\addspace}%   % 英語: ピリオド+スペース
   \printlist{publisher}%
   %% 再版情報（英語の場合）
   \iffieldundef{origyear}{}{%
@@ -644,11 +646,19 @@
     \usebibmacro{translatora}%
   }%
   \usebibmacro{date+extradate}%
-  \setunit*{\adddot\addspace}%
+  \jpa@postyear%
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
-  \iffieldundef{edition}{}{\addspace\printfield{edition}}%
-  \setunit*{\addspace}%
+  \iffieldundef{edition}{}{%
+    \ifnumequal{\jpa@useinitials}{0}{%
+      \printtext[parens]{\printfield{edition}}%
+    }{%
+      \addspace\printtext[parens]{\printfield{edition}}%
+    }%
+  }%
+  \ifnumequal{\jpa@useinitials}{0}%
+    {\jpa@fullspace}%
+    {\adddot\addspace}%
   \printlist{publisher}%
   \printtext{)}%
 }
@@ -680,8 +690,8 @@
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   %% 書籍情報（編集者＋書籍名）
   \ifnumequal{\jpa@useinitials}{0}%
-    {\addspace}%  % 日本語: スペース区切り
-    {\newunit}%   % 英語: ピリオド+スペース
+    {\jpa@fullspace}%  % 日本語: 全角スペース
+    {\newunit}%        % 英語: ピリオド+スペース
   \usebibmacro{bookinfo}%
   \setunit{\addspace}%
   %% ページ・版数
@@ -692,7 +702,7 @@
     pp.\space\printfield{pages}%
   }%
   \ifnumequal{\jpa@useinitials}{0}{%
-    \nopunct\setunit{\addspace}%
+    \nopunct\jpa@fullspace%
   }{\newunit}%
   %% 出版社
   \printlist{publisher}%
@@ -782,9 +792,12 @@
     }%
   }%
   \iffieldundef{number}{}{%
-    \printfield{number}\addspace%
+    \printfield{number}%
   }%
   %% 出版社
+  \ifnumequal{\jpa@useinitials}{0}%
+    {\jpa@fullspace}%
+    {\adddot\addspace}%
   \printlist{publisher}%
   \usebibmacro{finentry}%
 }
@@ -850,8 +863,11 @@
   }%
   %% 論文集 / 大会名
   \iffieldundef{booktitle}{}{%
+    \ifnumequal{\jpa@useinitials}{0}%
+      {\jpa@fullspace}%  % 日本語: タイトルと論文集名の間は全角スペース
+      {}%
     \printfield{booktitle}%
-    \setunit*{\addcomma\addspace}%
+    \setunit*{\jpa@voldelim}%  % 日英対応のカンマ区切り
   }%
   \iffieldundef{eventtitle}{}{%
     \printfield{eventtitle}%
