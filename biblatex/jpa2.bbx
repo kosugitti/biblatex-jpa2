@@ -575,14 +575,13 @@
   %% 版数
   \iffieldundef{edition}{}{%
     \ifnumequal{\jpa@useinitials}{0}{%
-      \printfield{edition}%
+      \addspace\printfield{edition}%
     }{%
-      \mkbibparens{\printfield{edition}}%
-      \setunit{\adddot\addspace}%
+      \addspace\mkbibparens{\printfield{edition}}%
     }%
   }%
   %% 出版社
-  \ifnumequal{\jpa@useinitials}{1}{\adddot\addspace}{}%
+  \ifnumequal{\jpa@useinitials}{1}{\adddot\addspace}{\addspace}%
   \printlist{publisher}%
   %% 再版情報（英語の場合）
   \iffieldundef{origyear}{}{%
