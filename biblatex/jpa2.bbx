@@ -840,6 +840,7 @@
   \newunit%
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
+  \addspace%
   \usebibmacro{type+institution}%
   \usebibmacro{finentry}%
 }
@@ -852,13 +853,12 @@
 \DeclareBibliographyDriver{inproceedings}{%
   \usebibmacro{begentry}%
   \usebibmacro{author+year}%
-  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   %% 発表形式（英語のみ）
   \iffieldundef{type}{}{%
-    \mkbibbrackets{\printfield{type}}%
+    \addspace\mkbibbrackets{\printfield{type}}%
     \newunit%
   }%
   %% 論文集 / 大会名
