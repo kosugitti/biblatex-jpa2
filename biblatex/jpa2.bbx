@@ -60,7 +60,7 @@
   %% 区切り文字（DelimFormat 以外のもの）
   \renewcommand*{\revsdnamepunct}{\addspace}%
   \renewcommand*{\newunitpunct}{}%
-  \renewcommand*{\finentrypunct}{}%
+  \renewcommand*{\finentrypunct}{\adddot}%
   %% 「他」
   \def\jpa@andothersdelim{}%
   \def\jpa@andotherstext{他}%
@@ -286,13 +286,12 @@
 %% =====================================================
 
 %%% 著者名+出版年 %%%
+%%% 出力: 著者名 (年).  /  著者名 (年)．
 \newbibmacro*{author+year}{%
   \printnames{author}%
   \ifnameundef{author}{%
     \setunit*{\printdelim{nonameyeardelim}}%
   }{%
-    %% 著者名と年の間: 半角スペース（日英共通）
-    %% JPA書式では Author, A. (2020) / 著者 名 (2020)
     \addspace%
   }%
   \iffieldundef{pubstate}{%
@@ -300,6 +299,8 @@
   }{%
     \printfield[parens]{pubstate}%
   }%
+  %% 年の後にピリオド+スペース（日英共通）
+  \setunit{\adddot\addspace}%
 }
 
 %%% 著者名+タイプ（編 / Ed. など） %%%
@@ -559,7 +560,7 @@
     \iffieldundef{authortype}{}{\usebibmacro{authortype:label}}%
     \ifnameundef{editor}{%
       \addspace\printtext[parens]{\printdateextra}%
-      \newunit%
+      \setunit{\adddot\addspace}%
     }{\addspace}%
   }%
   %% 編集者名
@@ -567,7 +568,7 @@
     \printnames{editor}%
     \usebibmacro{editortype:label}%
     \addspace\printtext[parens]{\printdateextra}%
-    \newunit%
+    \setunit{\adddot\addspace}%
   }%
   %% 表題
   \printfield{title}%
@@ -615,12 +616,10 @@
   \addspace\newunit%
   \usebibmacro{translator}%
   \ifnameundef{translatora}{}{%
-    \printnames{translatora}%
     \usebibmacro{translatora}%
-    \addspace%
   }%
   \usebibmacro{date+extradate}%
-  \setunit*{\addperiod\addspace}%
+  \setunit*{\adddot\addspace}%
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   \iffieldundef{edition}{}{\addspace\printfield{edition}}%
@@ -650,7 +649,7 @@
   %% 著者名，刊行年
   \printnames{author}%
   \addspace\mkbibparens{\printdateextra}%
-  \newunit%
+  \setunit{\adddot\addspace}%
   %% 特定章名
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
