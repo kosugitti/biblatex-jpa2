@@ -650,15 +650,15 @@
   \usebibmacro{begentry}%
   %% 著者名，刊行年
   \printnames{author}%
-  \mkbibparens{\printdateextra}%
-  \setunit{\addperiod\addspace}%
+  \addspace\mkbibparens{\printdateextra}%
+  \newunit%
   %% 特定章名
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   %% 書籍情報（編集者＋書籍名）
   \ifnumequal{\jpa@useinitials}{0}%
-    {\addspace}%
-    {}%
+    {\addspace}%  % 日本語: スペース区切り
+    {\newunit}%   % 英語: ピリオド+スペース
   \usebibmacro{bookinfo}%
   \setunit{\addspace}%
   %% ページ・版数
@@ -775,7 +775,7 @@
   \usebibmacro{begentry}%
   %% 著者名，公開年
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
@@ -801,7 +801,7 @@
 \DeclareBibliographyDriver{thesis}{%
   \usebibmacro{begentry}%
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   \usebibmacro{type+institution}%
@@ -816,7 +816,7 @@
 \DeclareBibliographyDriver{inproceedings}{%
   \usebibmacro{begentry}%
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
@@ -879,11 +879,14 @@
 \DeclareBibliographyDriver{misc}{%
   \usebibmacro{begentry}%
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
   %% 掲載紙（誌）
+  \ifnumequal{\jpa@useinitials}{0}%
+    {\addspace}%
+    {\newunit}%
   \printfield{journaltitle}\addspace%
   %% 発行日
   \iffieldundef{howpublished}{}{%
@@ -902,14 +905,14 @@
 \DeclareBibliographyDriver{software}{%
   \usebibmacro{begentry}%
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   \printfield{title}%
   \iffieldundef{version}{}{%
     \addspace\mkbibparens{\printfield{version}}%
   }%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   \iflistundef{publisher}{}{%
-    \printlist{publisher}\setunit{\addperiod\addspace}%
+    \printlist{publisher}\newunit%
   }%
   \printfield{doi}%
   \usebibmacro{finentry}%
