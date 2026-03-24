@@ -38,18 +38,32 @@
 %% カスタムフラグ: 0=日本語, 1=英語
 \def\jpa@useinitials{1}%
 
+%% --- 全角文字定義（日本語用） ---
+\def\jpa@fullperiod{．}%    % 全角ピリオド
+\def\jpa@fullcomma{，}%     % 全角カンマ
+\def\jpa@fullspace{　}%     % 全角スペース
+
 %% --- 英語モードの設定 ---
 \newcommand*{\jpa@setEnglish}{%
   \def\jpa@useinitials{1}%
-  %% 区切り文字（DelimFormat 以外のもの）
+  %% 区切り文字
   \renewcommand*{\revsdnamepunct}{\addcomma\space}%
   \renewcommand*{\newunitpunct}{\adddot\addspace}%
   \renewcommand*{\finentrypunct}{\adddot}%
+  %% 括弧: 半角
+  \renewcommand*{\bibleftparen}{(}%
+  \renewcommand*{\bibrightparen}{)}%
   %% et al.
   \def\jpa@andothersdelim{\space}%
   \def\jpa@andotherstext{et~al.}%
   \def\jpa@andotherstextcite{et~al.}%
   \def\jpa@andotherscomma{,}%
+  %% 年後の区切り: ピリオド+スペース
+  \def\jpa@postyear{\adddot\addspace}%
+  %% 雑誌の巻号区切り: 半角カンマ
+  \def\jpa@voldelim{\addcomma\addspace}%
+  %% タイトルと雑誌名の間
+  \def\jpa@pretitle@journal{\newunit}%
   %% in: マクロ
   \renewbibmacro{in:}{\printtext{In}\addspace}%
 }
@@ -57,18 +71,32 @@
 %% --- 日本語モードの設定 ---
 \newcommand*{\jpa@setJapanese}{%
   \def\jpa@useinitials{0}%
-  %% 区切り文字（DelimFormat 以外のもの）
+  %% 区切り文字
   \renewcommand*{\revsdnamepunct}{\addspace}%
   \renewcommand*{\newunitpunct}{}%
-  \renewcommand*{\finentrypunct}{\adddot}%
+  \renewcommand*{\finentrypunct}{}%  % 日本語書籍はピリオドなしで終了
+  %% 括弧: 全角
+  \renewcommand*{\bibleftparen}{（}%
+  \renewcommand*{\bibrightparen}{）}%
   %% 「他」
   \def\jpa@andothersdelim{}%
   \def\jpa@andotherstext{他}%
   \def\jpa@andotherstextcite{他}%
   \def\jpa@andotherscomma{}%
+  %% 年後の区切り: 全角ピリオド
+  \def\jpa@postyear{\jpa@fullperiod}%
+  %% 雑誌の巻号区切り: 全角カンマ
+  \def\jpa@voldelim{\jpa@fullcomma}%
+  %% タイトルと雑誌名の間: 全角スペース
+  \def\jpa@pretitle@journal{\jpa@fullspace}%
   %% in: マクロ（日本語では「In」を表示しない）
   \renewbibmacro{in:}{}%
 }
+
+%% デフォルト値
+\def\jpa@postyear{\adddot\addspace}%
+\def\jpa@voldelim{\addcomma\addspace}%
+\def\jpa@pretitle@journal{\newunit}%
 
 %% --- 名前区切り: 実行時に \jpa@useinitials を見て分岐 ---
 %% （DeclareDelimFormat は一度だけ宣言し、実行時に判定する）
@@ -299,8 +327,8 @@
   }{%
     \printfield[parens]{pubstate}%
   }%
-  %% 年の後にピリオド+スペース（日英共通）
-  \setunit{\adddot\addspace}%
+  %% 年の後の区切り（日本語: ．  英語: . ）
+  \jpa@postyear%
 }
 
 %%% 著者名+タイプ（編 / Ed. など） %%%
@@ -400,7 +428,7 @@
   }{%
     %% 巻なし、号あり → No. を付ける
     \printfield{number}%
-    \setunit*{\addcomma\addspace}%
+    \setunit*{\jpa@voldelim}%
   }{%
     %% 巻あり
     \mkbibemph{\printfield{volume}}%
@@ -408,7 +436,7 @@
       \setunit*{\addthinspace}%
       \printtext[parens]{\printfield{number}}%
     }%
-    \setunit*{\addcomma\addspace}%
+    \setunit*{\jpa@voldelim}%
   }%
 }
 
@@ -496,23 +524,20 @@
   \usebibmacro{begentry}%
   %% 著者名，刊行年
   \usebibmacro{author+year}%
-  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
-  %% 誌名（日本語: スペース区切り、英語: ピリオド+スペース）
-  \ifnumequal{\jpa@useinitials}{0}%
-    {\addspace}%
-    {\newunit}%
+  %% 誌名（日本語: 全角スペース、英語: ピリオド+スペース）
+  \jpa@pretitle@journal%
   \printfield{journaltitle}%
   %% 巻号・ページ（Advance online publication の場合は別処理）
   \iffieldundef{howpublished}{%
-    \setunit*{\addcomma\addspace}%
+    \setunit*{\jpa@voldelim}%
     \usebibmacro{volume+issues}%
     \iffieldundef{pages}{}{\printfield{pages}\adddot}%
   }{%
     \ifnumequal{\jpa@useinitials}{0}%
-      {\addspace}%
+      {\jpa@fullspace}%
       {\adddot\addspace}%
     \printtext{Advance online publication}%
   }%
@@ -560,7 +585,7 @@
     \iffieldundef{authortype}{}{\usebibmacro{authortype:label}}%
     \ifnameundef{editor}{%
       \addspace\printtext[parens]{\printdateextra}%
-      \setunit{\adddot\addspace}%
+      \jpa@postyear%
     }{\addspace}%
   }%
   %% 編集者名
@@ -568,7 +593,7 @@
     \printnames{editor}%
     \usebibmacro{editortype:label}%
     \addspace\printtext[parens]{\printdateextra}%
-    \setunit{\adddot\addspace}%
+    \jpa@postyear%
   }%
   %% 表題
   \printfield{title}%
@@ -649,7 +674,7 @@
   %% 著者名，刊行年
   \printnames{author}%
   \addspace\mkbibparens{\printdateextra}%
-  \setunit{\adddot\addspace}%
+  \jpa@postyear%
   %% 特定章名
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
