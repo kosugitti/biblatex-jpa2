@@ -1,0 +1,130 @@
+\documentclass[a4paper]{jlreq}
+\usepackage[block=par,backend=biber,style=../biblatex/jpa2]{biblatex}
+\usepackage{url}
+\urlstyle{same}
+\addbibresource{./sample.bib}
+
+\title{jpa2：日本心理学会指定書式\\[.5\zh]Bib{\LaTeX}スタイル（再設計版）}
+\author{テスト文書}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{見本 3.8 引用文献例の再現}
+
+本節では，JPA執筆・投稿の手びき（2022年版）見本3.8（p.39）に掲載されている
+引用文献例をすべて再現する。
+
+\subsection{本文中での引用テスト}
+
+日本語の textcite: \textcite{Fukaya2011a}は……。
+同著者の別文献: \textcite{Fukaya2011b}。
+共著の日本語: \textcite{Hayashi2015}。
+英語の textcite: \textcite{Ishii2011a}は……。
+英語の共著: \textcite{Ishii2017}。
+括弧引用: \parencite{Sugiura2003}。
+括弧引用（英語）: \parencite{Christie2011}。
+翻訳書: \textcite{Whiston2013ja}。
+
+\subsection{複数引用}
+
+複数の引用をまとめて:
+\parencite{Fukaya2011a,Ishii2011a,Kaminose2017}。
+
+\section{セクション 3.10.2 外国語文献の例}
+
+\subsection{(2) 書籍}
+
+一般的な例: \textcite{Christie2011}; \textcite{Rosen2015}。
+
+版数: \textcite{APA2013}。
+
+編集書: \textcite{Osaka2007}。
+
+編集書中の特定章: \textcite{Morioka2018}。
+
+数巻にわたる書籍: \textcite{Freud1956}。
+
+シリーズの1巻: \textcite{Lamb2015}。
+
+翻訳書: \textcite{Helmholtz1925}。
+
+再版: \textcite{Adler1970}。
+
+\subsection{(3) 逐次刊行物}
+
+論文: \textcite{Takahashi2017}。
+
+\subsection{(4) オンライン資料}
+
+Advance online: \textcite{Yokoyama2020}。
+
+プレプリント: \textcite{Yoshimura2020}。
+
+オンラインDOIあり: \textcite{Katahira2020}。
+
+オンラインDOIなし: \textcite{Abrams2020}。
+
+\subsection{(5) その他}
+
+学位論文: \textcite{Tsukamoto2015}。
+
+学会発表: \textcite{Oe2016}。
+
+印刷中: \textcite{OSeaghdha2024}。
+
+新聞記事: \textcite{Uematsu2015}。
+
+
+\section{セクション 3.10.3 日本語文献の例}
+
+\subsection{(2) 書籍}
+
+一般: \textcite{Ichikawa2016}。
+
+改訂版: \textcite{Hasegawa2020}。
+
+編集書・監修書: \textcite{Hori2009}。
+
+特定章: \textcite{Naito2018}。
+
+数巻: \textcite{Nojima2018}。
+
+特定の1巻: \textcite{Asano2020}。
+
+翻訳書: \textcite{LopezCorvo2014ja}。
+
+\subsection{(3) 逐次刊行物}
+
+論文: \textcite{Kawakami2019}。
+
+通し番号: \textcite{Saito2019}。
+
+年報: \textcite{Homusogo2019}。
+
+紀要: \textcite{Nakamichi2019}。
+
+\subsection{(4) オンライン資料}
+
+早期公開: \textcite{Kanemasa2021}。
+
+DOIあり: \textcite{Yajima2013}。
+
+DOIなし: \textcite{JPA2022}。
+
+\subsection{(5) その他}
+
+学位論文: \textcite{Mukaida2009}。
+
+学会発表: \textcite{Tsuzuki2018}。
+
+印刷中: \textcite{Hasegawa2024inpress}。
+
+新聞記事: \textcite{Sato2013}。
+
+
+%% 引用文献リスト
+\printbibliography[title=引用文献]
+
+\end{document}
