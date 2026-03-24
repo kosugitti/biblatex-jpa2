@@ -8,9 +8,15 @@
 %% 引用ごとに langid を検出して言語モードを切替
 \AtEveryCitekey{%
   \jpa@setEnglish%  デフォルトは英語
+  %% 引用コンテキスト用の名前区切り（英語）
+  \renewcommand*{\multinamedelim}{\addcomma\space}%
+  \renewcommand*{\finalnamedelim}{\addspace\&\space}%
   \iffieldundef{langid}{}{%
     \iffieldequalstr{langid}{japanese}{%
       \jpa@setJapanese%
+      %% 引用コンテキスト用の名前区切り（日本語）
+      \renewcommand*{\multinamedelim}{・}%
+      \renewcommand*{\finalnamedelim}{・}%
     }{}%
   }%
 }

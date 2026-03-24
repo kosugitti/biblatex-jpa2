@@ -291,7 +291,9 @@
   \ifnameundef{author}{%
     \setunit*{\printdelim{nonameyeardelim}}%
   }{%
-    \setunit*{\printdelim{nameyeardelim}}%
+    %% 著者名と年の間: 半角スペース（日英共通）
+    %% JPA書式では Author, A. (2020) / 著者 名 (2020)
+    \addspace%
   }%
   \iffieldundef{pubstate}{%
     \usebibmacro{date+extradate}%
@@ -310,13 +312,37 @@
 
 %%% 著者のタイプラベル %%%
 \newbibmacro*{authortype:label}{%
-  \addspace\printtext[parens]{\printfield{authortype}}%
+  \iffieldequalstr{authortype}{editor}{%
+    %% authortype=editor の場合は editortype:label と同様に処理
+    \ifnumequal{\jpa@useinitials}{0}{%
+      \printtext[parens]{編}%
+    }{%
+      \ifthenelse{\value{author}>1}{%
+        \addspace\printtext[parens]{Eds.}%
+      }{%
+        \addspace\printtext[parens]{Ed.}%
+      }%
+    }%
+  }{%
+    %% その他（監修 etc.）はそのまま表示
+    \addspace\printtext[parens]{\printfield{authortype}}%
+  }%
 }
 
 %%% 編集者のタイプラベル %%%
 \newbibmacro*{editortype:label}{%
   \iffieldundef{editortype}{%
-    \addspace\printtext[parens]{\bibstring{editor}}%
+    \ifnumequal{\jpa@useinitials}{0}{%
+      %% 日本語: （編）
+      \printtext[parens]{編}%
+    }{%
+      %% 英語: (Ed.) / (Eds.)
+      \ifthenelse{\value{editor}>1}{%
+        \addspace\printtext[parens]{Eds.}%
+      }{%
+        \addspace\printtext[parens]{Ed.}%
+      }%
+    }%
   }{%
     \addspace\printtext[parens]{\printfield{editortype}}%
   }%
@@ -338,7 +364,11 @@
 \renewbibmacro*{translator}{%
   \printnames{translator}%
   \iffieldundef{translatortype}{%
-    \addspace\printtext[parens]{\bibstring{translator}}%
+    \ifnumequal{\jpa@useinitials}{0}{%
+      \printtext[parens]{訳}%
+    }{%
+      \addspace\printtext[parens]{Trans.}%
+    }%
   }{%
     \addspace\printtext[parens]{\printfield{translatortype}}%
   }%
@@ -349,7 +379,11 @@
 \newbibmacro*{translatora}{%
   \printnames{translatora}%
   \iffieldundef{translatoratype}{%
-    \addspace\printtext[parens]{\bibstring{translator}}%
+    \ifnumequal{\jpa@useinitials}{0}{%
+      \printtext[parens]{訳}%
+    }{%
+      \addspace\printtext[parens]{Trans.}%
+    }%
   }{%
     \addspace\printtext[parens]{\printfield{translatoratype}}%
   }%
@@ -461,12 +495,14 @@
   \usebibmacro{begentry}%
   %% 著者名，刊行年
   \usebibmacro{author+year}%
-  \setunit{\addperiod\addspace}%
+  \newunit%
   %% 表題
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
-  \newunit%
-  %% 誌名
+  %% 誌名（日本語: スペース区切り、英語: ピリオド+スペース）
+  \ifnumequal{\jpa@useinitials}{0}%
+    {\addspace}%
+    {\newunit}%
   \printfield{journaltitle}%
   %% 巻号・ページ（Advance online publication の場合は別処理）
   \iffieldundef{howpublished}{%
@@ -522,16 +558,16 @@
     \printnames{author}%
     \iffieldundef{authortype}{}{\usebibmacro{authortype:label}}%
     \ifnameundef{editor}{%
-      \printtext[parens]{\printdateextra}%
-      \setunit{\addperiod\addspace}%
+      \addspace\printtext[parens]{\printdateextra}%
+      \newunit%
     }{\addspace}%
   }%
   %% 編集者名
   \ifnameundef{editor}{}{%
     \printnames{editor}%
     \usebibmacro{editortype:label}%
-    \printtext[parens]{\printdateextra}%
-    \setunit{\adddot\addspace}%
+    \addspace\printtext[parens]{\printdateextra}%
+    \newunit%
   }%
   %% 表題
   \printfield{title}%
@@ -564,13 +600,18 @@
 \newbibmacro*{jpa@book:translationof}{%
   %% related先のエントリ（原著）を展開
   \usebibmacro{related:init}%
-  %% 原著情報
-  \entrydata*{\thefield{related}}{%
-    \usebibmacro{jpa@book:normal}%
-  }%
+  \renewcommand*{\relatedpunct}{}%
+  %% 原著情報（英語モードで展開）
+  \begingroup%
+    \jpa@setEnglish%
+    \entrydata*{\thefield{related}}{%
+      \usebibmacro{jpa@book:normal}%
+    }%
+  \endgroup%
   \setunit{\addperiod}%
-  %% 訳書情報を括弧内に
-  \printtext{(}%
+  %% 訳書情報を括弧内に（日本語モードに戻す）
+  \jpa@setJapanese%
+  \printtext{\\(}%
   \printnames{author}%
   \addspace\newunit%
   \usebibmacro{translator}%
@@ -583,7 +624,7 @@
   \setunit*{\addperiod\addspace}%
   \printfield{title}%
   \iffieldundef{subtitle}{}{\printfield{subtitle}}%
-  \iffieldundef{edition}{}{\printfield{edition}}%
+  \iffieldundef{edition}{}{\addspace\printfield{edition}}%
   \setunit*{\addspace}%
   \printlist{publisher}%
   \printtext{)}%
