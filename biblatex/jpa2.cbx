@@ -21,8 +21,10 @@
   }%
 }
 
-%% 著者名と出版年の区切り: カンマ
-\DeclareDelimFormat{nameyeardelim}{\addcomma\space}
+%% 著者名と出版年の区切り: 日本語は全角カンマ、英語は半角カンマ
+\DeclareDelimFormat{nameyeardelim}{%
+  \ifnumequal{\jpa@useinitials}{0}{\jpa@fullcomma}{\addcomma\space}%
+}
 
 %% et al. / 他 の表示
 %% .lbx の extras で \jpa@andotherstext 等が定義されている
