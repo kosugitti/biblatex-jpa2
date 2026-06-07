@@ -11,8 +11,5 @@
 *.fdb_latexmk
 *.fls
 
-# PDF (generated)
-doc/*.pdf
-
 # OS files
 .DS_Store
