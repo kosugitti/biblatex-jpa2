@@ -1,0 +1,19 @@
+name: その他の不具合・要望
+description: インストールの問題、機能要望、ドキュメントの誤りなど
+title: "[その他] "
+labels: ["triage"]
+body:
+  - type: textarea
+    id: body
+    attributes:
+      label: 内容
+      description: 起きたこと、または提案したいこと。インストール（Style 'jpa2' not found など）の場合は設置方法（コピー／symlink）と kpsewhich の結果も添えてください。
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 環境（任意）
+      description: OS / TeXLive年度 / biblatex・biber バージョン
+    validations:
+      required: false

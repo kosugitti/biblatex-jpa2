@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 使い方の質問・相談（Discussions）
+    url: https://github.com/kosugitti/biblatex-jpa2/discussions/new?category=q-a
+    about: インストールや書き方の質問、「これで合っている？」の確認はこちらへ。
+  - name: アイデア・提案（Discussions）
+    url: https://github.com/kosugitti/biblatex-jpa2/discussions/new?category=ideas
+    about: 対応してほしい文献タイプや改善案など、議論したいことはこちらへ。
+  - name: Zotero 版（jpa-csl-zotero）
+    url: https://github.com/kosugitti/jpa-csl-zotero
+    about: LaTeX ではなく Zotero で同じ書式を使いたい場合はこちら。
+  - name: 執筆・投稿の手びき（日本心理学会）
+    url: https://psych.or.jp/manual/
+    about: 書式仕様の一次情報。

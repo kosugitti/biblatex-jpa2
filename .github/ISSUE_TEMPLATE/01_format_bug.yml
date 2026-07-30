@@ -1,0 +1,56 @@
+name: 書式・出力の不具合
+description: 手びき2022年版と出力が食い違う、エラーになる、などを報告する
+title: "[書式] "
+labels: ["format"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        出力が手びきと違う場合の報告フォームです。使い方の質問は Issue ではなく
+        [Discussions](https://github.com/kosugitti/biblatex-jpa2/discussions) へお願いします。
+  - type: dropdown
+    id: entrytype
+    attributes:
+      label: 文献タイプ
+      options:
+        - "和文: 雑誌論文 (@article)"
+        - "和文: 書籍 (@book)"
+        - "和文: 編集書の章 (@inbook / @incollection)"
+        - "和文: 学会発表 (@inproceedings)"
+        - "和文: 学位論文 (@thesis)"
+        - "和文: オンライン (@online)"
+        - "欧文（いずれか）"
+        - "翻訳書 (related/translationof)"
+        - "本文中の引用 (\\textcite / \\parencite)"
+        - "その他・複数"
+    validations:
+      required: true
+  - type: textarea
+    id: bibentry
+    attributes:
+      label: .bib エントリ
+      description: 問題を再現する最小の bib エントリを貼ってください
+      render: bibtex
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の出力
+      description: いま出力される文字列（文献リストまたは本文引用）
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する出力と手びきの該当箇所
+      description: あるべき出力と、手びき2022年版の見本番号・ページ（例 見本3.8, 3.10.3(2)）
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: 環境
+      description: TeXLive年度 / biblatex・biber のバージョン / エンジン（例 TeXLive2025, biblatex 3.20, biber 2.20, lualatex）
+    validations:
+      required: false
