@@ -13,3 +13,7 @@
 
 # OS files
 .DS_Store
+
+# 教員用の作業メモ（公開しない）
+CLAUDE.md
+WORKLOG.md
