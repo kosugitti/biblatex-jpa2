@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>biblatex-jpa2 使い方ガイド — 日本心理学会スタイル（BibLaTeX）</title>
+<meta name="description" content="日本心理学会『執筆・投稿の手びき』2022年版に準拠した BibLaTeX スタイル biblatex-jpa2 の、インストールと .bib の書き方、文献タイプ別の入力と組版結果のガイド。">
+<style>
+  :root{
+    --paper:#F5F6F9; --surface:#FFFFFF; --ink:#1B1E27; --ink-soft:#535966;
+    --line:#DCDFE7; --accent:#33417A; --accent-bright:#4E60BE;
+    --code-bg:#ECEEF4; --code-ink:#2A2F3D; --render-bg:#FCFBF6; --render-line:#E7E2D4;
+    --warn-bg:#FBF3E7; --warn-line:#E9CE9E; --ok:#2E7D57;
+    --measure:44rem;
+    --sans:"Hiragino Kaku Gothic ProN","Yu Gothic",YuGothic,"Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mincho:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"Noto Serif JP","Times New Roman",serif;
+    --mono:ui-monospace,"SF Mono","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#111319; --surface:#191C24; --ink:#E7E9F0; --ink-soft:#A2A8B6;
+      --line:#2B303B; --accent:#95A2EA; --accent-bright:#AEB9F4;
+      --code-bg:#14161D; --code-ink:#CDD2DE; --render-bg:#1D1A15; --render-line:#332D22;
+      --warn-bg:#25200F; --warn-line:#5A4A22; --ok:#63C097;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F5F6F9; --surface:#FFFFFF; --ink:#1B1E27; --ink-soft:#535966;
+    --line:#DCDFE7; --accent:#33417A; --accent-bright:#4E60BE;
+    --code-bg:#ECEEF4; --code-ink:#2A2F3D; --render-bg:#FCFBF6; --render-line:#E7E2D4;
+    --warn-bg:#FBF3E7; --warn-line:#E9CE9E; --ok:#2E7D57;
+  }
+  :root[data-theme="dark"]{
+    --paper:#111319; --surface:#191C24; --ink:#E7E9F0; --ink-soft:#A2A8B6;
+    --line:#2B303B; --accent:#95A2EA; --accent-bright:#AEB9F4;
+    --code-bg:#14161D; --code-ink:#CDD2DE; --render-bg:#1D1A15; --render-line:#332D22;
+    --warn-bg:#25200F; --warn-line:#5A4A22; --ok:#63C097;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.75;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{
+    max-width:74rem; margin:0 auto; padding:0 clamp(1rem,4vw,3rem);
+    display:grid; grid-template-columns:1fr; gap:0;
+  }
+  @media (min-width:64rem){
+    .wrap{grid-template-columns:15rem minmax(0,1fr); gap:3.5rem; align-items:start}
+  }
+
+  /* ---- header ---- */
+  header.top{grid-column:1/-1; padding:clamp(2.5rem,7vw,5rem) 0 2rem; border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--accent); font-weight:700; margin:0 0 1rem;
+  }
+  h1{
+    font-family:var(--mincho); font-weight:600; color:var(--ink);
+    font-size:clamp(2rem,5vw,3rem); line-height:1.2; margin:0 0 .6rem;
+    text-wrap:balance; letter-spacing:.01em;
+  }
+  h1 .en{font-family:var(--mono); font-weight:500; font-size:.5em; color:var(--ink-soft); letter-spacing:0; display:block; margin-top:.5rem}
+  .lede{font-size:1.08rem; color:var(--ink-soft); max-width:var(--measure); margin:.5rem 0 0}
+  .meta-row{display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.6rem}
+  .chip{
+    font-size:.8rem; font-family:var(--mono); color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:.28rem .8rem;
+  }
+  .chip b{color:var(--accent); font-weight:600}
+
+  /* ---- nav ---- */
+  nav.toc{grid-column:1; font-size:.9rem}
+  @media (min-width:64rem){
+    nav.toc{position:sticky; top:2rem; padding-top:2.5rem}
+  }
+  nav.toc .toc-h{font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); margin:0 0 .7rem; font-weight:700}
+  nav.toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.15rem}
+  nav.toc a{display:block; padding:.35rem .6rem; border-radius:6px; color:var(--ink-soft); text-decoration:none; border-left:2px solid transparent}
+  nav.toc a:hover{color:var(--accent); background:var(--surface); border-left-color:var(--accent)}
+  @media (max-width:63.99rem){
+    nav.toc{grid-column:1/-1; border-bottom:1px solid var(--line); padding:1.5rem 0}
+    nav.toc ol{flex-direction:row; flex-wrap:wrap; gap:.3rem}
+    nav.toc a{border:1px solid var(--line); border-radius:999px; padding:.3rem .75rem}
+  }
+
+  /* ---- main ---- */
+  main{grid-column:1; min-width:0; padding:2.5rem 0 5rem}
+  @media (min-width:64rem){ main{grid-column:2} }
+  section{margin:0 0 3.2rem; scroll-margin-top:1.5rem}
+  section > *{max-width:var(--measure)}
+  section > .example, section > .table-scroll{max-width:none}
+  h2{
+    font-size:1.5rem; font-weight:700; margin:0 0 1rem; padding-top:.5rem;
+    color:var(--ink); letter-spacing:.01em; text-wrap:balance;
+    display:flex; align-items:baseline; gap:.6rem;
+  }
+  h2 .num{font-family:var(--mono); font-size:.9rem; color:var(--accent); font-weight:600}
+  h3{font-size:1.08rem; font-weight:700; margin:2rem 0 .6rem; color:var(--ink)}
+  p{margin:.7rem 0}
+  a{color:var(--accent-bright); text-decoration:none; border-bottom:1px solid color-mix(in srgb,var(--accent-bright) 35%,transparent)}
+  a:hover{border-bottom-color:var(--accent-bright)}
+  strong{font-weight:700}
+  code{font-family:var(--mono); font-size:.88em; background:var(--code-bg); color:var(--code-ink); padding:.1em .4em; border-radius:4px}
+  ul{margin:.6rem 0; padding-left:1.3rem}
+  li{margin:.3rem 0}
+  li::marker{color:var(--accent)}
+
+  /* code blocks */
+  pre{
+    background:var(--code-bg); color:var(--code-ink); border:1px solid var(--line);
+    border-radius:10px; padding:1rem 1.1rem; overflow-x:auto; margin:1rem 0;
+    font-family:var(--mono); font-size:.83rem; line-height:1.6; tab-size:2;
+  }
+  pre code{background:none; padding:0; font-size:inherit; color:inherit}
+
+  /* signature: input -> proof example */
+  .example{margin:1.4rem 0; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface)}
+  .example .ex-title{font-size:.95rem; font-weight:700; padding:.7rem 1rem; background:color-mix(in srgb,var(--accent) 7%,var(--surface)); border-bottom:1px solid var(--line); color:var(--ink)}
+  .ex-grid{display:grid; grid-template-columns:1fr; gap:0}
+  @media (min-width:52rem){ .ex-grid{grid-template-columns:1fr 1fr} }
+  .ex-panel{padding:.5rem 0 0; min-width:0}
+  .ex-panel + .ex-panel{border-top:1px solid var(--line)}
+  @media (min-width:52rem){ .ex-panel + .ex-panel{border-top:0; border-left:1px solid var(--line)} }
+  .ex-label{font-size:.68rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color:var(--ink-soft); padding:.4rem 1.1rem 0}
+  .ex-panel pre{border:0; border-radius:0; margin:.4rem 0 0; background:var(--code-bg)}
+  .proof{
+    background:var(--render-bg); font-family:var(--mincho); font-size:.98rem; line-height:1.85;
+    padding:.9rem 1.1rem 1.1rem; color:var(--ink);
+    padding-left:2.3rem; text-indent:-1.2rem; /* ぶら下げインデント風 */
+  }
+  .proof i{font-style:italic}
+  .proof.en{font-size:.94rem}
+
+  /* callouts */
+  .note,.warn{border-radius:10px; padding:1rem 1.2rem; margin:1.2rem 0; border:1px solid var(--line); background:var(--surface)}
+  .note{border-left:3px solid var(--accent)}
+  .warn{background:var(--warn-bg); border:1px solid var(--warn-line); border-left:3px solid var(--warn-line)}
+  .note .h,.warn .h{font-weight:700; margin:0 0 .3rem; font-size:.95rem}
+  .note p:last-child,.warn p:last-child{margin-bottom:0}
+
+  /* table */
+  .table-scroll{overflow-x:auto; margin:1.2rem 0; border:1px solid var(--line); border-radius:10px}
+  table{border-collapse:collapse; width:100%; font-size:.92rem; min-width:34rem}
+  th,td{text-align:left; padding:.6rem .9rem; border-bottom:1px solid var(--line); vertical-align:top}
+  th{background:color-mix(in srgb,var(--accent) 7%,var(--surface)); font-weight:700; color:var(--ink)}
+  tr:last-child td{border-bottom:0}
+  td code{white-space:nowrap}
+
+  footer{grid-column:1/-1; border-top:1px solid var(--line); padding:2rem 0 3rem; color:var(--ink-soft); font-size:.9rem}
+  footer a{color:var(--ink-soft)}
+
+  :focus-visible{outline:2px solid var(--accent-bright); outline-offset:2px; border-radius:3px}
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+  html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <p class="eyebrow">日本心理学会スタイル · BibLaTeX</p>
+    <h1>biblatex-jpa2 使い方ガイド<span class="en">JPA『執筆・投稿の手びき』2022年版準拠スタイル</span></h1>
+    <p class="lede">日本心理学会『執筆・投稿の手びき』（2022年版）の書式で，和文・欧文が混在する引用文献リストを組む BibLaTeX スタイルです。エントリごとに <code>langid</code> を見て和文／欧文の書式を自動で切り替えます。このページは，インストールと <code>.bib</code> の書き方を，文献タイプ別の「入力」と「組版結果」の対で示します。</p>
+    <div class="meta-row">
+      <span class="chip"><b>対象</b> LuaLaTeX + jlreq</span>
+      <span class="chip"><b>backend</b> biber</span>
+      <span class="chip"><b>style</b> jpa2</span>
+      <span class="chip"><b>license</b> LPPL</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="目次">
+    <p class="toc-h">目次</p>
+    <ol>
+      <li><a href="#about">1. これは何か</a></li>
+      <li><a href="#install">2. 設置とプリアンブル</a></li>
+      <li><a href="#must">3. 最初に必ず</a></li>
+      <li><a href="#ja">4. 和文の例</a></li>
+      <li><a href="#en">5. 欧文の例</a></li>
+      <li><a href="#trans">6. 翻訳書</a></li>
+      <li><a href="#auto">7. 自動でやること</a></li>
+      <li><a href="#faq">8. よくある失敗</a></li>
+      <li><a href="#types">9. 対応タイプ一覧</a></li>
+      <li><a href="#credits">10. クレジット</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="about">
+      <h2><span class="num">1</span>これは何か</h2>
+      <p>心理学の論文を <strong>LaTeX で書く人</strong>のためのスタイルです。<code>.bib</code> に文献を貯め、和文には <code>langid = {japanese}</code> を付けるだけで、手びき2022年版の書式（中黒区切りの著者名、全角の年括弧、サブタイトルの <code>——…——</code>、巻の斜体、DOI のURL化など）で文献リストと本文引用が出力されます。</p>
+      <p>先行スタイル <a href="https://github.com/sbtseiji/biblatex-jpa">biblatex-jpa</a>（芝田征司氏）を参考に、言語切替の設計をゼロから作り直したものです。グローバル変数ではなく <code>langid</code> フィールドで一件ずつ判定します。</p>
+      <div class="note">
+        <p class="h">Word / Zotero を使う人へ</p>
+        <p>LaTeX ではなく Zotero で同じ書式を使いたい場合は、姉妹プロジェクトの <a href="https://github.com/kosugitti/jpa-csl-zotero">jpa-csl-zotero</a>（Zotero 用 CSL）を使ってください。本スタイルの書式を CSL に移植したものです。</p>
+      </div>
+      <div class="warn">
+        <p class="h">非公式</p>
+        <p>個人が作成したものであり、日本心理学会が提供・承認したスタイルではありません。</p>
+      </div>
+    </section>
+
+    <section id="install">
+      <h2><span class="num">2</span>設置とプリアンブル</h2>
+      <p>スタイルは 5 ファイル（<code>jpa2.bbx</code> / <code>jpa2.cbx</code> / <code>jpa2.dbx</code> / <code>japanese-jpa2.lbx</code> / <code>english-jpa2.lbx</code>）で構成されます。TeX の検索パスに置きます。macOS（MacTeX）なら <code>TEXMFHOME</code> が定番です。</p>
+      <pre><code>mkdir -p ~/Library/texmf/tex/latex/biblatex-jpa2
+cp biblatex/*.bbx biblatex/*.cbx biblatex/*.dbx biblatex/*.lbx \
+   ~/Library/texmf/tex/latex/biblatex-jpa2/
+kpsewhich jpa2.bbx      # パスが返れば設置成功</code></pre>
+      <p>プリアンブルは次のとおりです。<code>backend=biber</code> が必須です。</p>
+      <pre><code>\documentclass[a4paper]{jlreq}
+\usepackage[backend=biber, style=jpa2]{biblatex}
+\addbibresource{文献.bib}
+
+\begin{document}
+本文中の引用は \textcite{Fukaya2011a} や \parencite{Sugiura2003} で。
+\printbibliography[title=引用文献]
+\end{document}</code></pre>
+      <p>ビルドは <code>lualatex → biber → lualatex</code> の順です。biblatex 3.17 以降・biber 2.17 以降を推奨します。</p>
+    </section>
+
+    <section id="must">
+      <h2><span class="num">3</span>最初に必ず、この2つ</h2>
+      <h3>① 和文には <code>langid = {japanese}</code></h3>
+      <p>これが和文書式のスイッチです。欧文文献には付けません（既定で欧文として処理）。既存の <code>.bib</code> で <code>language = {japanese}</code> を使っている場合も、biber の sourcemap が自動で <code>langid</code> に変換します。</p>
+      <h3>② 和文には <code>sortname</code> と <code>sorttitle</code></h3>
+      <p>手びきの並び順は、和文・欧文を区別せず<strong>ローマ字読みで混在ソート</strong>します（浅野=Asano が American と Christie の間に入る）。CSL/biber は漢字の読みを知らないので、読みを与えます。</p>
+      <ul>
+        <li><code>sortname</code>: 著者名のローマ字（例 <code>Fukaya, Tatsushi</code>）— 欧文と混ざる並び順を決める</li>
+        <li><code>sorttitle</code>: タイトルのひらがな読み（例 <code>かがくてきがいねん…</code>）— 同一著者・同一年の a/b（extradate）の順序を決める</li>
+      </ul>
+      <p><code>sorttitle</code> をひらがなにすると、biber が Unicode の五十音順（か &lt; が &lt; き …）で正しく extradate を振ります。</p>
+    </section>
+
+    <section id="ja">
+      <h2><span class="num">4</span>和文文献の例</h2>
+      <p>左が <code>.bib</code> の入力、右が組版結果（手びき2022の見本と同じ書式）です。</p>
+
+      <div class="example">
+        <div class="ex-title">雑誌論文（共著・DOI あり）</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@article{Kaminose2017,
+  author       = {上瀬, 由美子 and 高橋, 尚也
+                  and 矢野, 恵美},
+  sortname     = {Kaminose, Yumiko and
+                  Takahashi, Naoya and Yano, Emi},
+  date         = {2017},
+  title        = {官民協働刑務所開設による社会的
+                  包摂促進の検討},
+  journaltitle = {心理学研究},
+  volume       = {87},
+  pages        = {579--589},
+  doi          = {10.4992/jjpsy.87.15035},
+  langid       = {japanese},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof">上瀬 由美子・高橋 尚也・矢野 恵美 （2017）．官民協働刑務所開設による社会的包摂促進の検討　心理学研究，<i>87</i>，579–589. https://doi.org/10.4992/jjpsy.87.15035</div></div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="ex-title">書籍（版数あり）</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@book{Hasegawa2020,
+  author    = {長谷川, 寿一 and 東條, 正城
+               and 大島, 尚 and 丹野, 義彦
+               and 廣中, 直行},
+  sortname  = {Hasegawa, Toshikazu and ...},
+  date      = {2020},
+  title     = {はじめて出会う心理学},
+  edition   = {第3版},
+  publisher = {有斐閣},
+  langid    = {japanese},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof">長谷川 寿一・東條 正城・大島 尚・丹野 義彦・廣中 直行 （2020）．はじめて出会う心理学 第3版　有斐閣</div></div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="ex-title">編集書のなかの1章</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@inbook{Naito2018,
+  author    = {内藤, 美加},
+  sortname  = {Naito, Mika},
+  date      = {2018},
+  title     = {記憶の発達と心的時間移動},
+  subtitle  = {自閉スペクトラム症の未解決課題再考},
+  editor    = {鈴木, 國文 and 内海, 健
+               and 清水, 光恵},
+  booktitle = {発達障害の精神病理I},
+  pages     = {73--96},
+  publisher = {星和書店},
+  langid    = {japanese},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof">内藤 美加 （2018）．記憶の発達と心的時間移動——自閉スペクトラム症の未解決課題再考——　鈴木 國文・内海 健・清水 光恵（編） 発達障害の精神病理I （pp. 73–96）　星和書店</div></div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="ex-title">学会発表・学位論文</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@inproceedings{Hayashi2015,
+  author    = {林, 創 and 山田, 剛史},
+  date      = {2015},
+  title     = {学術論文の読みを通したリサーチ
+               リテラシー育成の試み},
+  booktitle = {日本教育心理学会第57回総会発表論文集},
+  pages     = {611},
+  langid    = {japanese},
+}
+
+@thesis{Mukaida2009,
+  author      = {向田, 久美子},
+  date        = {2009},
+  title       = {語りに見るライフ・スクリプトの
+                 文化心理学的研究},
+  subtitle    = {文化圏比較と世代間比較を通して},
+  type        = {博士論文},
+  institution = {お茶の水女子大学大学院},
+  langid      = {japanese},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof">林 創・山田 剛史 （2015）．学術論文の読みを通したリサーチリテラシー育成の試み　日本教育心理学会第57回総会発表論文集，611</div><div class="proof">向田 久美子 （2009）．語りに見るライフ・スクリプトの文化心理学的研究——文化圏比較と世代間比較を通して—— お茶の水女子大学大学院博士論文</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="en">
+      <h2><span class="num">5</span>欧文文献の例</h2>
+      <p>欧文は <code>langid</code> を付けません。書式はおおむね APA 準拠です。</p>
+
+      <div class="example">
+        <div class="ex-title">雑誌論文</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@article{Ishii2017,
+  author       = {Ishii, K. and Eisen, C.
+                  and Hitokoto, H.},
+  date         = {2017},
+  title        = {The effects of social status and
+                  culture on delay discounting},
+  journaltitle = {Japanese Psychological Research},
+  volume       = {59},
+  pages        = {230--237},
+  doi          = {10.1111/jpr.12154},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof en">Ishii, K., Eisen, C., &amp; Hitokoto, H. (2017). The effects of social status and culture on delay discounting. <i>Japanese Psychological Research, 59</i>, 230–237. https://doi.org/10.1111/jpr.12154</div></div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="ex-title">書籍（版数）・編集書中の章</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@book{APA2013,
+  author    = {{American Psychiatric Association}},
+  date      = {2013},
+  title     = {Diagnostic and statistical manual
+               of mental disorders},
+  edition   = {5},
+  publisher = {American Psychiatric Association},
+}
+
+@inbook{Morioka2018,
+  author    = {Morioka, M.},
+  date      = {2018},
+  title     = {On the constitution of self-experience
+               in the psychotherapeutic dialogue},
+  editor    = {Konopka, A. and Hermans, H. J. M.
+               and Gonçalves, M. M.},
+  booktitle = {Handbook of Dialogical Self Theory
+               and Psychotherapy},
+  pages     = {206--219},
+  publisher = {Routledge},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof en">American Psychiatric Association (2013). <i>Diagnostic and statistical manual of mental disorders</i> (5th ed.) American Psychiatric Association.</div><div class="proof en">Morioka, M. (2018). On the constitution of self-experience in the psychotherapeutic dialogue. In A. Konopka, H. J. M. Hermans, &amp; M. M. Gonçalves (Eds.) <i>Handbook of Dialogical Self Theory and Psychotherapy</i> (pp. 206–219). Routledge.</div></div>
+        </div>
+      </div>
+
+      <div class="example">
+        <div class="ex-title">オンライン（プレプリント）</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@online{Yoshimura2020,
+  author     = {Yoshimura, N. and Morimoto, K.
+                and Murai, M. and Kihara, Y.
+                and Marmolejo-Ramos, F.
+                and Yamada, Y.},
+  date       = {2020},
+  title      = {Age of smile},
+  subtitle   = {A cross-cultural replication report
+                of Ganel and Goodale (2018)},
+  eprinttype = {PsyArXiv},
+  doi        = {10.31234/osf.io/dtx6j},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof en">Yoshimura, N., Morimoto, K., Murai, M., Kihara, Y., Marmolejo-Ramos, F., &amp; Yamada, Y. (2020). <i>Age of smile: A cross-cultural replication report of Ganel and Goodale (2018)</i>. PsyArXiv. https://doi.org/10.31234/osf.io/dtx6j</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="trans">
+      <h2><span class="num">6</span>翻訳書は2エントリで連結する</h2>
+      <p>翻訳書は、原著の欧文エントリと訳書の和文エントリを別々に作り、訳書側から <code>related</code> / <code>relatedtype = {translationof}</code> で原著を指します。原著の後ろに訳書を全角括弧で並記する手びきの形が自動生成されます。</p>
+      <div class="example">
+        <div class="ex-title">訳書（related 方式）</div>
+        <div class="ex-grid">
+          <div class="ex-panel"><div class="ex-label">.bib 入力</div><pre><code>@book{LopezCorvo2009,
+  author    = {Lopez-Corvo, R. E.},
+  date      = {2009},
+  title     = {The Woman Within},
+  subtitle  = {A Psychoanalytic Essay on Femininity},
+  publisher = {Routledge},
+}
+@book{LopezCorvo2014ja,
+  author          = {ロペス＝コルヴォ, R. E.},
+  sortname        = {Lopez-Corvo, R. E.},
+  translator      = {井上, 果子},
+  translatortype  = {監訳},
+  translatora     = {飯野, 晴子 and 赤木, 里奈
+                     and 山田, 一子},
+  translatoratype = {訳},
+  date            = {2014},
+  title           = {内なる女性},
+  subtitle        = {女性性に関する精神分析的小論},
+  publisher       = {星和書店},
+  related         = {LopezCorvo2009},
+  relatedtype     = {translationof},
+  langid          = {japanese},
+}</code></pre></div>
+          <div class="ex-panel"><div class="ex-label">組版結果</div><div class="proof en">Lopez-Corvo, R. E. (2009). <i>The Woman Within: A Psychoanalytic Essay on Femininity</i>. Routledge. (ロペス＝コルヴォ R. E. 井上 果子 （監訳） 飯野 晴子・赤木 里奈・山田 一子 （訳） （2014）．内なる女性——女性性に関する精神分析的小論——　星和書店)</div></div>
+        </div>
+      </div>
+      <p>本文引用は <code>\textcite{LopezCorvo2014ja}</code> で「Lopez-Corvo （2009 井上監訳 2014）」のように、原著年と訳書年を併記します。</p>
+    </section>
+
+    <section id="auto">
+      <h2><span class="num">7</span>スタイルが自動でやること</h2>
+      <ul>
+        <li><strong>言語切替</strong>：<code>langid</code> を見て、著者区切り（<code>・</code> / <code>,&amp;</code>）・年括弧（全角／半角）・句読点・スペースを一件ずつ切り替える。</li>
+        <li><strong>後方互換</strong>：<code>language = {japanese}</code> を <code>langid</code> に自動変換する。</li>
+        <li><strong>3名以上の引用</strong>：本文では「第1著者 他（発行年）」に短縮する（<code>他</code> / <code>et al.</code>）。</li>
+        <li><strong>混在ソート</strong>：<code>sortname</code> のローマ字で和文・欧文を一列に並べる。</li>
+        <li><strong>翻訳書</strong>：<code>related</code> でつないだ原著＋訳書を1項目にまとめる。</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2><span class="num">8</span>よくある失敗と直し方</h2>
+
+      <h3><code>Style 'jpa2' not found.</code> と出る</h3>
+      <p>スタイルをシンボリックリンクで置いています。<strong>コピー</strong>で設置し直してください。原稿フォルダにローカルコピーを置く運用でも解決します（カレントディレクトリが優先されます）。</p>
+
+      <h3>3名の引用が「第1著者・第2著者 他」になる</h3>
+      <p>基底スタイルの <code>uniquelist</code> が名前リストを展開しているためです。手びきは「第1著者 他（年で区別）」なので、<code>jpa2.cbx</code> 側で <code>uniquelist=false, uniquename=false</code> を明示済みです（v0.3 で対応）。古い版を使っている場合は最新に更新してください。</p>
+
+      <h3>DOI が出力されない</h3>
+      <p><code>@misc</code> 駆動子は DOI を出しません。R パッケージなど DOI を出したい資料は <code>@software</code> や <code>@online</code> を使ってください。</p>
+
+      <h3>a/b の順序が手びきと違う</h3>
+      <p>同一著者・同一年の並びは <code>sorttitle</code>（ひらがな読み）で決まります。<code>sorttitle</code> を付けると Unicode 五十音順で正しく振られます。</p>
+    </section>
+
+    <section id="types">
+      <h2><span class="num">9</span>対応エントリタイプ</h2>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>エントリタイプ</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>@article</code></td><td>雑誌論文・紀要・Advance online publication</td></tr>
+            <tr><td><code>@book</code></td><td>書籍（一般・版数・編集書）</td></tr>
+            <tr><td><code>@inbook</code></td><td>編集書中の特定章</td></tr>
+            <tr><td><code>@incollection</code></td><td>数巻シリーズの特定の1巻</td></tr>
+            <tr><td><code>@mvbook</code></td><td>数巻にわたる書籍</td></tr>
+            <tr><td><code>@online</code></td><td>プレプリント・ウェブ資料</td></tr>
+            <tr><td><code>@thesis</code></td><td>学位論文</td></tr>
+            <tr><td><code>@inproceedings</code></td><td>学会発表</td></tr>
+            <tr><td><code>@report</code></td><td>年報・年鑑</td></tr>
+            <tr><td><code>@software</code></td><td>ソフトウェア（DOI 出力可）</td></tr>
+            <tr><td><code>@misc</code></td><td>新聞・雑誌記事</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>手びき2022年版の見本3.8・セクション3.10 の全引用例を <code>doc/sample.bib</code> に収録し、<code>doc/jpa2-manual.pdf</code> で出力を確認できます。</p>
+    </section>
+
+    <section id="credits">
+      <h2><span class="num">10</span>クレジットとライセンス</h2>
+      <ul>
+        <li><strong>設計の参考元</strong>：<a href="https://github.com/sbtseiji/biblatex-jpa">biblatex-jpa</a>（芝田征司氏）</li>
+        <li><strong>書式仕様</strong>：日本心理学会『執筆・投稿の手びき』2022年版</li>
+        <li><strong>Zotero 版</strong>：<a href="https://github.com/kosugitti/jpa-csl-zotero">jpa-csl-zotero</a>（CSL 移植）</li>
+        <li><strong>ライセンス</strong>：LPPL（LaTeX Project Public License）</li>
+      </ul>
+      <div class="note">
+        <p class="h">困ったとき・気づいたとき</p>
+        <p>出力が手びきと違う、エラーが出る、対応してほしい文献タイプがある — お気軽にどうぞ。<br>
+        <a href="https://github.com/kosugitti/biblatex-jpa2/issues/new/choose"><strong>Issue</strong></a>（不具合・要望の報告）／ <a href="https://github.com/kosugitti/biblatex-jpa2/discussions"><strong>Discussions</strong></a>（使い方の質問・相談）</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>biblatex-jpa2 — 日本心理学会『執筆・投稿の手びき』2022年版準拠 BibLaTeX スタイル（非公式）。リポジトリ: <a href="https://github.com/kosugitti/biblatex-jpa2">github.com/kosugitti/biblatex-jpa2</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
